@@ -319,12 +319,12 @@ today = datetime.datetime.now()
 d1 = today.strftime("%y-%m-%d")
 
 #general run name
-Filename = f"run1-GAr"
+Filename = f"run3-GArNoHV"
 
 #add other info, V, P, T
 T_set = 295.75 #K
-P_set = 1.32 #bar
-HV_set = 1400 #V
+P_set = 1.59 #bar
+HV_set = 0 #V
 
 ch1scaleSet= 50
 ch2scaleSet= 50
@@ -424,7 +424,7 @@ SetupFunctionGen(funGen, pulsefreq = 1)
 ############# data taking #############
 collectN = 10 #number of pulses to take in a dataset
 timeBetween = 2 #seconds - time between datasets
-dataTakingTime = 30 #seconds - time to take data for
+dataTakingTime = 60 #seconds - time to take data for
 
 end_time = time() + (dataTakingTime)
 print(f"Taking data for {dataTakingTime} s ({dataTakingTime/60:.2} min), {collectN} pulses every {timeBetween} s")
