@@ -319,12 +319,12 @@ today = datetime.datetime.now()
 d1 = today.strftime("%y-%m-%d")
 
 #general run name
-Filename = f"run5-GAr"
+Filename = f"run1-GAr"
 
 #add other info, V, P, T
 T_set = 295.75 #K
-P_set = 0.53 #bar
-HV_set = 200 #V
+P_set = 1.32 #bar
+HV_set = 1400 #V
 
 ch1scaleSet= 50
 ch2scaleSet= 50
@@ -396,7 +396,7 @@ defaults:
 '''
 
 SetupTektronic(scope, timescale=2, delay=8, ch1Scale=ch1scaleSet, ch1Pos=-3,
-                ch2Scale=ch2scaleSet, ch2Pos=0, 
+                ch2Scale=ch2scaleSet, ch2Pos=1, 
                 TrgScale=200, VsetTrig=-150)
 
 
@@ -423,7 +423,7 @@ SetupFunctionGen(funGen, pulsefreq = 1)
 
 ############# data taking #############
 collectN = 10 #number of pulses to take in a dataset
-timeBetween = 5 #seconds - time between datasets
+timeBetween = 2 #seconds - time between datasets
 dataTakingTime = 30 #seconds - time to take data for
 
 end_time = time() + (dataTakingTime)
