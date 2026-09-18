@@ -319,12 +319,12 @@ today = datetime.datetime.now()
 d1 = today.strftime("%y-%m-%d")
 
 #general run name
-Filename = f"run3-GArNoHV"
+Filename = f"run6-GAr"
 
 #add other info, V, P, T
 T_set = 295.75 #K
-P_set = 1.59 #bar
-HV_set = 0 #V
+P_set = 1.485 #bar
+HV_set = 600 #V
 
 ch1scaleSet= 50
 ch2scaleSet= 50
