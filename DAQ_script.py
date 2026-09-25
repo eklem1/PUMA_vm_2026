@@ -319,15 +319,15 @@ today = datetime.datetime.now()
 d1 = today.strftime("%y-%m-%d")
 
 #general run name
-Filename = f"run2-GAr"
+Filename = f"run9vac"
 
 #add other info, V, P, T
-T_set = 295.75 #K
-P_set = 1.466 #bar
-HV_set = 400 #V
+T_set = 4.5 #K
+P_set = 0.0 #bar
+HV_set = 170 #V
 
-ch1scaleSet= 50
-ch2scaleSet= 50
+ch1scaleSet= 300
+ch2scaleSet= 300
 
 # run2_Filling_T-195_P-780_HV-1700_2025-01-28_0_113456
 
@@ -423,8 +423,8 @@ SetupFunctionGen(funGen, pulsefreq = 1)
 
 ############# data taking #############
 collectN = 10 #number of pulses to take in a dataset
-timeBetween = 2 #seconds - time between datasets
-dataTakingTime = 60 #seconds - time to take data for
+timeBetween = 2 #60*5 #seconds - time between datasets
+dataTakingTime = 10000000 #seconds - time to take data for
 
 end_time = time() + (dataTakingTime)
 print(f"Taking data for {dataTakingTime} s ({dataTakingTime/60:.2} min), {collectN} pulses every {timeBetween} s")
@@ -440,7 +440,7 @@ set_number = 0 #set counter
 funGen.write('C2:OUTP ON')
 funGen.write('C1:OUTP ON')
 
-firstTrigger=True
+firstTrigger= True
 totalPulses = 10
 
 #start the data taking
