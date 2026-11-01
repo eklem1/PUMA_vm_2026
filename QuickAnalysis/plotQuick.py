@@ -5,7 +5,7 @@ from time import *
 import datetime
 import os, sys
 
-folder_path = "./PUMADAQtesting_data/26-09-17/run1-vac/" 
+folder_path = "../PUMADAQtesting_data/26-09-17/run1-vac/" 
 filename = "run1-vac_T-295.75_P-0.0_HV-30_26-09-17_waveform_set-0_pulse-1.csv" 
 
 #folder_path = "../data/26-09-08/run3-vac/" 
