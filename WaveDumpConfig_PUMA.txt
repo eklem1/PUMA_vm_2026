@@ -147,3 +147,5 @@ BASELINE_LEVEL         60 #want anode baseline set high as signal goes down
 
 
 [3]
+ENABLE_INPUT           YES
+BASELINE_LEVEL         20 #want cathode baseline set low as signal goes up to ~2V
