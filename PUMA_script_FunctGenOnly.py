@@ -21,44 +21,67 @@ def SetupFunctionGen(funGen, pulsefreq = 2, pulseWidth = 0.0002, riseEdge=0.0000
     # pulsefreq = 1 #unit is Hz
     #set up the waveform we want
     #set to pulse type
-    funGen.write('C1:BSWV WVTP,PULSE')
+    funGen.write('C1:BSWV WVTP,RAMP')
     # Frequency: 2 Hz 
-    funGen.write(f'C1:BSWV FRQ,{pulsefreq}') #unit is Hz
+    funGen.write(f'C1:BSWV FRQ,200000')#{pulsefreq}') #unit is Hz
     # Use low/high levels (and not Amplitude) 
     #I think this sets the high/low levels correctly - there seems to be be no definite switch you do
     # High level: 6 V 
-    funGen.write('C1:BSWV HLEV,6') #unit is V
-    #funGen.write('C1:BSWV HLEV,0.7') #changed just for daq testing
+    #funGen.write('C1:BSWV HLEV,6') #unit is V
+    funGen.write('C1:BSWV HLEV,0.3') #changed just for daq testing
     # Low level : 0 V 
     funGen.write('C1:BSWV LLEV,0')
     # Pulse width: 200 us  
     # pulseWidth = 0.0002
-    funGen.write(f'C1:BSWV WIDTH,{pulseWidth}') #unit is s
+    funGen.write(f'C1:BSWV WIDTH,0.000002')#{pulseWidth}') #unit is s
     # Rise edge: 20 ns 
     # riseEdge=0.00000002
     funGen.write(f'C1:BSWV RISE,{riseEdge}') #unit is s
-    # #query the waveform
+    funGen.write('C1:OUTP ON,PLRT,INVT')
+    #funGen.write('C1:BSWV OFST,0') #V
+    # query the waveform
     q = funGen.query('C1:BSWV?')
-    # print(q)
+    print(q)
     
     ## set up channel 2 for triggering on
     funGen.write('C2:BSWV WVTP,PULSE')
-    #funGen.write(f'C2:BSWV FRQ,{pulsefreq}') #unit is Hzc
+    funGen.write(f'C2:BSWV FRQ,{pulsefreq}') #unit is Hzc
     funGen.write('C2:BSWV HLEV,1') #unit is V
     # Low level : 0 V 
     funGen.write('C2:BSWV LLEV,0')
     # Pulse width: 200 us  
     # pulseWidth = 0.0002
-    funGen.write(f'C1:BSWV WIDTH,{pulseWidth}') #unit is s
+    funGen.write(f'C2:BSWV WIDTH,{pulseWidth}') #unit is s
     # Rise edge: 20 ns 
     # riseEdge=0.00000002
     funGen.write(f'C2:BSWV RISE,{riseEdge}') #unit is s
     funGen.write('C2:OUTP ON,PLRT,INVT') #invert channel output
     
-    funGen.write('COUP FCOUP,ON')
-    funGen.write('COUP PCOUP,ON')
+    #funGen.write('COUP FCOUP,ON')
+    #funGen.write('COUP PCOUP,ON')
     
     return
+    
+def GetValue(host, valuePath):
+    """
+    Read values from midas for monitoring
+    """
+    command = { "jsonrpc":"2.0",
+            "method": "db_get_values",
+            "params":{
+                "paths":[valuePath]
+            },
+            "id":1
+    }
+
+    response = requests.post( host, 
+        json=command, 
+        headers={"Content-Type": "application/json"})
+        
+    data = response.json()
+    #print(data)
+
+    return data['result']['data']
 
 ################ main ################
 
@@ -72,8 +95,8 @@ print(rm.list_resources())
 # connect to function generator
 # functionGen_address = "USB0::0xF4EC::0x1101::SDG6XFCQ6R0795::INSTR" #USB connection
 #functionGen_address = "TCPIP::10.0.0.9::inst0::INSTR" #siglent funct gen, on triumf labnet, ethernet
-#functionGen_address = "TCPIP::129.129.141.91::inst0::INSTR" # at PSI, west side?
-functionGen_address = "TCPIP::129.129.140:177::inst0::INSTR" # at PSI, should be static now, east side
+functionGen_address = "TCPIP::129.129.141.91::inst0::INSTR" # at PSI, west side?
+#functionGen_address = "TCPIP::129.129.140:177::inst0::INSTR" # at PSI, should be static now, east side - NOT WORKING, WHY??
 
 try:
     # Open a connection to the oscilloscope
@@ -89,7 +112,7 @@ except Exception as e:
 
 # set pulse frequency, and width if you want
 # 2 Hz is about as fast as it's useful with how fast at least the tektronics scope data saving goes
-pulsefreq = 1 #Hz
+pulsefreq = 1.0 #Hz
 
 pulseWidth = 0.0002 #s, default is 0.0002 -> 200 uS
 riseEdge=0.00000002 #s, default is 0.00000002 -> 2 ns, minimum of the function gen.
@@ -97,7 +120,7 @@ SetupFunctionGen(funGen, pulsefreq=pulsefreq, pulseWidth=pulseWidth, riseEdge=ri
 
 ############# data taking #############
 collectN = 10 #number of pulses to take in a dataset
-timeBetween = 5 #60*5 #seconds - time between datasets
+timeBetween = 10 #60*5 #seconds - time between datasets
 dataTakingTime = 30 #seconds - time to take data for
 totalPulses = 20 #for collecting a set number of pulses instead
 end_time = time() + (dataTakingTime)
@@ -111,11 +134,11 @@ data_number = 0 #total waveforms saved
 set_number = 0 #set counter
 
 #pulsefreq
-TimePerSet = collectN*pulsefreq
+TimePerSet = collectN*(1/pulsefreq)
 print(f'{TimePerSet} s per data set')
 
-funGen.write('C2:OUTP ON')
 funGen.write('C1:OUTP ON')
+funGen.write('C2:OUTP ON')
 
 endTimeSet = time() + TimePerSet
 
@@ -133,8 +156,8 @@ while time() < end_time: #for set time
         data_number += 1*collectN #total waveforms saved
         set_number += 1
         sleep(timeBetween) #this will be our interval we wait between sets
-        funGen.write('C2:OUTP ON')
         funGen.write('C1:OUTP ON')
+        funGen.write('C2:OUTP ON')
         endTimeSet = time()+TimePerSet
 
     else:
@@ -144,8 +167,9 @@ while time() < end_time: #for set time
             break          
 
 #turn off channel 1 and 2 of function gen at end if they aren't off yet
-funGen.write('C1:OUTP OFF')
 funGen.write('C2:OUTP OFF')
+funGen.write('C1:OUTP OFF')
 
 print(f"Run ended at {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}")
 print(f"{set_number} sets, total of {data_number} waveforms")
+
