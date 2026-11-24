@@ -21,23 +21,23 @@ def SetupFunctionGen(funGen, pulsefreq = 2, pulseWidth = 0.0002, riseEdge=0.0000
     # pulsefreq = 1 #unit is Hz
     #set up the waveform we want
     #set to pulse type
-    funGen.write('C1:BSWV WVTP,RAMP')
+    funGen.write('C1:BSWV WVTP,PULSE')
     # Frequency: 2 Hz 
-    funGen.write(f'C1:BSWV FRQ,200000')#{pulsefreq}') #unit is Hz
+    funGen.write(f'C1:BSWV FRQ,{pulsefreq}') #unit is Hz
     # Use low/high levels (and not Amplitude) 
     #I think this sets the high/low levels correctly - there seems to be be no definite switch you do
     # High level: 6 V 
     #funGen.write('C1:BSWV HLEV,6') #unit is V
-    funGen.write('C1:BSWV HLEV,0.3') #changed just for daq testing
+    funGen.write('C1:BSWV HLEV,1') #changed just for daq testing
     # Low level : 0 V 
     funGen.write('C1:BSWV LLEV,0')
     # Pulse width: 200 us  
     # pulseWidth = 0.0002
-    funGen.write(f'C1:BSWV WIDTH,0.000002')#{pulseWidth}') #unit is s
+    funGen.write(f'C1:BSWV WIDTH,{pulseWidth}') #unit is s
     # Rise edge: 20 ns 
     # riseEdge=0.00000002
     funGen.write(f'C1:BSWV RISE,{riseEdge}') #unit is s
-    funGen.write('C1:OUTP ON,PLRT,INVT')
+    #funGen.write('C1:OUTP ON,PLRT,INVT')
     #funGen.write('C1:BSWV OFST,0') #V
     # query the waveform
     q = funGen.query('C1:BSWV?')
@@ -95,8 +95,9 @@ print(rm.list_resources())
 # connect to function generator
 # functionGen_address = "USB0::0xF4EC::0x1101::SDG6XFCQ6R0795::INSTR" #USB connection
 #functionGen_address = "TCPIP::10.0.0.9::inst0::INSTR" #siglent funct gen, on triumf labnet, ethernet
-functionGen_address = "TCPIP::129.129.141.91::inst0::INSTR" # at PSI, west side?
+#functionGen_address = "TCPIP::129.129.141.91::inst0::INSTR" # at PSI, west side?
 #functionGen_address = "TCPIP::129.129.140:177::inst0::INSTR" # at PSI, should be static now, east side - NOT WORKING, WHY??
+functionGen_address = "TCPIP::129.129.140.180::inst0::INSTR" # at PSI, beam area
 
 try:
     # Open a connection to the oscilloscope
@@ -109,7 +110,7 @@ try:
 except Exception as e:
     print("Could not connect to function generator")
     print(e)
-
+    
 # set pulse frequency, and width if you want
 # 2 Hz is about as fast as it's useful with how fast at least the tektronics scope data saving goes
 pulsefreq = 1.0 #Hz
@@ -118,6 +119,7 @@ pulseWidth = 0.0002 #s, default is 0.0002 -> 200 uS
 riseEdge=0.00000002 #s, default is 0.00000002 -> 2 ns, minimum of the function gen.
 SetupFunctionGen(funGen, pulsefreq=pulsefreq, pulseWidth=pulseWidth, riseEdge=riseEdge)
 
+"""
 ############# data taking #############
 collectN = 10 #number of pulses to take in a dataset
 timeBetween = 10 #60*5 #seconds - time between datasets
@@ -172,4 +174,4 @@ funGen.write('C1:OUTP OFF')
 
 print(f"Run ended at {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}")
 print(f"{set_number} sets, total of {data_number} waveforms")
-
+"""

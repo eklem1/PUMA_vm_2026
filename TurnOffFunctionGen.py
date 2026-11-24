@@ -10,7 +10,8 @@ Just a little script to ensure the function gen is turned off
 # Create a VISA resource manager 
 rm = visa.ResourceManager() 
 
-functionGen_address = "TCPIP::129.129.141.91::inst0::INSTR" # at PSI, west side?
+#functionGen_address = "TCPIP::129.129.141.91::inst0::INSTR" # at PSI, west side?
+functionGen_address = "TCPIP::129.129.140.180::inst0::INSTR" # at PSI, beam area
 
 try: 
     # Open a connection to the oscilloscope 

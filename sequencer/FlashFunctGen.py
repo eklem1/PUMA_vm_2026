@@ -41,8 +41,7 @@ def SetupFunctionGen(funGen, pulsefreq = 2, pulseWidth = 0.0002, riseEdge=0.0000
     # Use low/high levels (and not Amplitude) 
     #I think this sets the high/low levels correctly - there seems to be be no definite switch you do
     # High level: 6 V 
-    funGen.write('C1:BSWV HLEV,6') #unit is V
-    #funGen.write('C1:BSWV HLEV,0.7') #changed just for daq testing
+    funGen.write('C1:BSWV HLEV,5') #unit is V
     # Low level : 0 V 
     funGen.write('C1:BSWV LLEV,0')
     # Pulse width: 200 us  
@@ -51,6 +50,7 @@ def SetupFunctionGen(funGen, pulsefreq = 2, pulseWidth = 0.0002, riseEdge=0.0000
     # Rise edge: 20 ns 
     # riseEdge=0.00000002
     funGen.write(f'C1:BSWV RISE,{riseEdge}') #unit is s
+    funGen.write('C1:OUTP ON,PLRT,NORM')
     # #query the waveform
     q = funGen.query('C1:BSWV?')
     # print(q)
@@ -125,8 +125,8 @@ def SingleSetFlashes(Npulses=10):
     print(rm.list_resources())
 
     # connect to function generator
-    functionGen_address = "TCPIP::129.129.141.91::inst0::INSTR" # at PSI, west side?
-    #functionGen_address = "TCPIP::129.129.140:177::inst0::INSTR" # at PSI, should be static now, east side - NOT WORKING, WHY??
+    #functionGen_address = "TCPIP::129.129.141.91::inst0::INSTR" # at PSI, west side?
+    functionGen_address = "TCPIP::129.129.140.180::inst0::INSTR" # at PSI, beam area
 
     try:
         # Open a connection to the oscilloscope
@@ -147,7 +147,8 @@ def SingleSetFlashes(Npulses=10):
 
         pulseWidth = 0.0002 #s, default is 0.0002 -> 200 uS
         riseEdge=0.00000002 #s, default is 0.00000002 -> 2 ns, minimum of the function gen.
-        SetupFunctionGenTEST(funGen, pulsefreq=pulsefreq, pulseWidth=pulseWidth, riseEdge=riseEdge)
+        ##### remove TEST if the lamp is actually being powered instead of funct gen->caen DT directly
+        SetupFunctionGen(funGen, pulsefreq=pulsefreq, pulseWidth=pulseWidth, riseEdge=riseEdge)
 
         ############# data taking #############
         collectN = Npulses #number of pulses to take in a dataset
@@ -165,7 +166,7 @@ def SingleSetFlashes(Npulses=10):
         TimePerSet = collectN*(1/pulsefreq) #actual time to run the funct. get for
         print(f'{TimePerSet} s per data set')
         
-        totalEvents=0
+        #totalEvents=0
         """
         #was trying a different way where we check how many events midas has saved to inform 
         host = "http://localhost:8080/?mjsonrpc"
@@ -202,4 +203,4 @@ def SingleSetFlashes(Npulses=10):
         print(f"Run ended at {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}")
         print(f"{set_number} sets, total of {data_number} waveforms")
         
-    return totalEvents
+    return 0 #totalEvents
