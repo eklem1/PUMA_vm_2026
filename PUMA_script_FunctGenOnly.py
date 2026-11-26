@@ -27,6 +27,54 @@ def SetupFunctionGen(funGen, pulsefreq = 2, pulseWidth = 0.0002, riseEdge=0.0000
     # Use low/high levels (and not Amplitude) 
     #I think this sets the high/low levels correctly - there seems to be be no definite switch you do
     # High level: 6 V 
+    funGen.write('C1:BSWV HLEV 6') #unit is V
+  
+    # Low level : 0 V 
+    funGen.write('C1:BSWV LLEV,0')
+    # Pulse width: 200 us  
+    # pulseWidth = 0.0002
+    funGen.write(f'C1:BSWV WIDTH,{pulseWidth}') #unit is s
+    # Rise edge: 20 ns 
+    # riseEdge=0.00000002
+    funGen.write(f'C1:BSWV RISE,{riseEdge}') #unit is s
+    funGen.write('C1:OUTP ON,PLRT,NORM')
+    #funGen.write('C1:BSWV OFST,0') #V
+    # query the waveform
+    q = funGen.query('C1:BSWV?')
+    print(q)
+    
+    ## set up channel 2 for triggering on
+    funGen.write('C2:BSWV WVTP,PULSE')
+    funGen.write(f'C2:BSWV FRQ,{pulsefreq}') #unit is Hzc
+    funGen.write('C2:BSWV HLEV,1.2') #unit is V
+    # Low level : 0 V 
+    funGen.write('C2:BSWV LLEV,0')
+    # Pulse width: 200 us  
+    # pulseWidth = 0.0002
+    funGen.write(f'C2:BSWV WIDTH,{pulseWidth}') #unit is s
+    # Rise edge: 20 ns 
+    # riseEdge=0.00000002
+    funGen.write(f'C2:BSWV RISE,{riseEdge}') #unit is s
+    funGen.write('C2:OUTP ON,PLRT,INVT') #invert channel output
+    
+    funGen.write('COUP FCOUP,ON')
+    funGen.write('COUP PCOUP,ON')
+    
+    return
+    
+# setup function for the siglent SGD 
+def SetupFunctionGenTEST(funGen, pulsefreq = 2, pulseWidth = 0.0002, riseEdge=0.00000002 ):
+
+    # pulseWidth = 0.000012
+    # pulsefreq = 1 #unit is Hz
+    #set up the waveform we want
+    #set to pulse type
+    funGen.write('C1:BSWV WVTP,PULSE')
+    # Frequency: 2 Hz 
+    funGen.write(f'C1:BSWV FRQ,{pulsefreq}') #unit is Hz
+    # Use low/high levels (and not Amplitude) 
+    #I think this sets the high/low levels correctly - there seems to be be no definite switch you do
+    # High level: 6 V 
     #funGen.write('C1:BSWV HLEV,6') #unit is V
     funGen.write('C1:BSWV HLEV,1') #changed just for daq testing
     # Low level : 0 V 
@@ -46,7 +94,7 @@ def SetupFunctionGen(funGen, pulsefreq = 2, pulseWidth = 0.0002, riseEdge=0.0000
     ## set up channel 2 for triggering on
     funGen.write('C2:BSWV WVTP,PULSE')
     funGen.write(f'C2:BSWV FRQ,{pulsefreq}') #unit is Hzc
-    funGen.write('C2:BSWV HLEV,1') #unit is V
+    funGen.write('C2:BSWV HLEV,1.2') #unit is V
     # Low level : 0 V 
     funGen.write('C2:BSWV LLEV,0')
     # Pulse width: 200 us  
@@ -61,27 +109,7 @@ def SetupFunctionGen(funGen, pulsefreq = 2, pulseWidth = 0.0002, riseEdge=0.0000
     #funGen.write('COUP PCOUP,ON')
     
     return
-    
-def GetValue(host, valuePath):
-    """
-    Read values from midas for monitoring
-    """
-    command = { "jsonrpc":"2.0",
-            "method": "db_get_values",
-            "params":{
-                "paths":[valuePath]
-            },
-            "id":1
-    }
 
-    response = requests.post( host, 
-        json=command, 
-        headers={"Content-Type": "application/json"})
-        
-    data = response.json()
-    #print(data)
-
-    return data['result']['data']
 
 ################ main ################
 
@@ -118,6 +146,11 @@ pulsefreq = 1.0 #Hz
 pulseWidth = 0.0002 #s, default is 0.0002 -> 200 uS
 riseEdge=0.00000002 #s, default is 0.00000002 -> 2 ns, minimum of the function gen.
 SetupFunctionGen(funGen, pulsefreq=pulsefreq, pulseWidth=pulseWidth, riseEdge=riseEdge)
+
+funGen.write('C2:OUTP ON')
+funGen.write('C1:OUTP ON')
+#sleep(10)
+#funGen.write('C2:OUTP OFF')
 
 """
 ############# data taking #############

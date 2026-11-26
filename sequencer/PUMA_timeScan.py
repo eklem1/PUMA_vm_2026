@@ -14,16 +14,16 @@ def sequence(seq):
     note = "test of time scan"
     #will run at one set HV
     setHV = 45/1000 #, V  CONVERT TO /1000  
-    Npulses = 20
-    timeBetween = 0.5*60 #seconds - time between datasets
-    dataTakingTime = 3*60 #seconds - total time to take data for
-    end_time = time.time() + (dataTakingTime) #vased on that, when does data taking stop    
+    Npulses = 40
+    timeBetween = 20*60 #seconds - time between datasets
+    dataTakingTime = 3*60*60 #seconds - total time to take data for
+    end_time = time.time() + (dataTakingTime) #based on that, when does data taking stop?    
     runinfo=f"Taking {Npulses} pulses at HV={setHV} V every {timeBetween} sec, until {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}"
     
     scanN = 0
     
     #set HV
-    if setHV<(50/1000):
+    if setHV<(1500/1000):
             success = talk.writeVoltage(setHV) #MAKE SURE YOU GIVE IT VALUES /1000 already 
             print("try")       
     if success != 1: #setting failed

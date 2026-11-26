@@ -30,8 +30,8 @@ def SetValue(host, valuePath, value):
             "id":1
     }
     
-    voltageLimit = 50/1000 #1V = 1kV - limit in vac
-    #voltageLimit = 1000/1000 #1V = 1kV - limit in gas?
+    #voltageLimit = 51/1000 #1V = 1kV - limit in vac
+    voltageLimit = 1950/1000 #1V = 1kV - limit in gas/liq
     
     if valuePath=="Equipment/CAEN N472/Variables/MSCB[8]" and value > voltageLimit:
         #STOP voltage too high!!
@@ -103,7 +103,8 @@ def writeVoltage(value):
             print("stepping to", HV)
             valuePath = "Equipment/CAEN N472/Variables/MSCB[8]"
             output = SetValue(hostMEG, valuePath, HV)
-            sleep(5)
+            print(f"current = {readCurrent()} uA")
+            sleep(2)
         #final step to value in case it's not a multiple of 0.01
         output = SetValue(hostMEG, valuePath, value)
         
@@ -122,5 +123,5 @@ def writeVoltage(value):
 #print(f"setting {valuePath}, success?", SetValue(hostMEG, valuePath, 33/1000))
 
 
-#output = writeVoltage(0.02)
+#output = writeVoltage(0.03)
 #print(output)

@@ -8,13 +8,14 @@ import FlashFunctGen as FunctGen
 import TalkToODB as talk
 
 def sequence(seq):
-    note = "vac run testing"
-    #change voltage range before run - 1V=1kV
-    start = 10 #negative, V    
-    stop = 40
-    step = 10
+    note = "in gas"
+    #change voltage range before run - 1V=1kV. 
+    #vac < 30 V
+    start = 800 #negative, V    
+    stop = 1800
+    step = 50
     HV_list = np.arange(start, stop+step, step)/1000 #CONVERT TO Voltage for 
-    Npulses = 20
+    Npulses = 40
     scanN = 0
 
     #should it check HV and then turn on ch2 with switch?
@@ -22,15 +23,15 @@ def sequence(seq):
         #set the HV
         print(HV)
         #set HV
-        #success=0
-        if HV<(50/1000):
+        success=0
+        if HV<(1900/1000):
             success = talk.writeVoltage(HV) #MAKE SURE YOU GIVE IT VALUES /1000 already 
-            print("try")       
+            print("placeholder")       
         if success != 1: #setting failed
             message = "HV setting failed, check value and caen HV" 
             seq.wait_seconds(10)
             break
-        seq.wait_seconds(10)
+        seq.wait_seconds(2)
         
         HVread = talk.readVoltage() #V
         Iread = talk.readCurrent() #uA
@@ -59,7 +60,7 @@ def sequence(seq):
         f.write(f"{runNumber},{HV},{HVread},{Iread},{Pread},{Tread},{Npulses},{scanN},{note}\n")
         f.close()
         scanN = scanN+1 #to group runs
-        seq.wait_seconds(10)
+        seq.wait_seconds(2)
 
 def at_exit(seq):
     #ensure the HV is turned off
