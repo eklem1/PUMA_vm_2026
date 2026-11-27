@@ -87,6 +87,7 @@ def readTemp():
     return output
     
 def writeVoltage(value):
+
     hostMEG = "http://pc13513.psi.ch:8081/?mjsonrpc"
     #first read current value that it's set to
     valuePath = "Equipment/CAEN N472/Variables/MSCB[8]"
@@ -117,11 +118,12 @@ def writeVoltage(value):
     
     return output
 
+
     
 #hostMEG = "http://pc13513.psi.ch:8081/?mjsonrpc"
 #valuePath = "Equipment/CAEN N472/Variables/MSCB[8]"
 #print(f"setting {valuePath}, success?", SetValue(hostMEG, valuePath, 33/1000))
 
 
-#output = writeVoltage(0.03)
+#output = writeVoltage(0.0)
 #print(output)

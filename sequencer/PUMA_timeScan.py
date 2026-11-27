@@ -9,21 +9,26 @@ sys.path.append("/home/daq/online/userfiles/sequencer")
 #import function generator control script
 import FlashFunctGen as FunctGen
 import TalkToODB as talk
+import datetime
 
 def sequence(seq):
-    note = "test of time scan"
+    note ="time scan in liq"
     #will run at one set HV
-    setHV = 45/1000 #, V  CONVERT TO /1000  
-    Npulses = 40
-    timeBetween = 20*60 #seconds - time between datasets
-    dataTakingTime = 3*60*60 #seconds - total time to take data for
+    setHV = 1900/1000 #, V  CONVERT TO /1000  
+    Npulses = 50
+    timeBetween = 5*60 #seconds - time between datasets
+    dataTakingTime = 1*60*60 #seconds - total time to take data for
     end_time = time.time() + (dataTakingTime) #based on that, when does data taking stop?    
     runinfo=f"Taking {Npulses} pulses at HV={setHV} V every {timeBetween} sec, until {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}"
+   
+    host = "http://localhost:8080/?mjsonrpc"
+    valuePath = "/Equipment/fe5725/Settings/V1730/Post Trigger"
+    postTrigger = int(talk.GetValue(host, valuePath)[0], 16)
     
     scanN = 0
     
     #set HV
-    if setHV<(1500/1000):
+    if setHV<(1950/1000):
             success = talk.writeVoltage(setHV) #MAKE SURE YOU GIVE IT VALUES /1000 already 
             print("try")       
     if success != 1: #setting failed
@@ -49,12 +54,14 @@ def sequence(seq):
             #stop midas run      
             seq.stop_run()
             
+            timeNow = datetime.datetime.now()
+            timeNow = timeNow.strftime('%Y%m%d_%H%M%S')
             host = "http://localhost:8080/?mjsonrpc"
             valuePath = "/Runinfo/Run number"
             runNumber = talk.GetValue(host, valuePath)[0] 
         
             f = open("/home/daq/online/runlogs/PUMA_runlog.txt", "a")
-            f.write(f"{runNumber},{setHV},{HVread},{Iread},{Pread},{Tread},{Npulses},{scanN},{note}\n")
+            f.write(f"{runNumber},{timeNow},{postTrigger},{setHV},{HVread},{Iread},{Pread},{Tread},{Npulses},{scanN},{note}\n")
             f.close()
             scanN = scanN+1 #to group runs
         

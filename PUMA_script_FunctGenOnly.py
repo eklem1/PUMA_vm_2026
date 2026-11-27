@@ -46,8 +46,8 @@ def SetupFunctionGen(funGen, pulsefreq = 2, pulseWidth = 0.0002, riseEdge=0.0000
     ## set up channel 2 for triggering on
     funGen.write('C2:BSWV WVTP,PULSE')
     funGen.write(f'C2:BSWV FRQ,{pulsefreq}') #unit is Hzc
-    funGen.write('C2:BSWV HLEV,1.2') #unit is V
-    # Low level : 0 V 
+    funGen.write('C2:BSWV HLEV,1.9') #unit is V
+    # Low level : 0 V s
     funGen.write('C2:BSWV LLEV,0')
     # Pulse width: 200 us  
     # pulseWidth = 0.0002
@@ -56,6 +56,8 @@ def SetupFunctionGen(funGen, pulsefreq = 2, pulseWidth = 0.0002, riseEdge=0.0000
     # riseEdge=0.00000002
     funGen.write(f'C2:BSWV RISE,{riseEdge}') #unit is s
     funGen.write('C2:OUTP ON,PLRT,INVT') #invert channel output
+    q = funGen.query('C2:BSWV?')
+    print(q)
     
     funGen.write('COUP FCOUP,ON')
     funGen.write('COUP PCOUP,ON')
@@ -141,7 +143,7 @@ except Exception as e:
     
 # set pulse frequency, and width if you want
 # 2 Hz is about as fast as it's useful with how fast at least the tektronics scope data saving goes
-pulsefreq = 1.0 #Hz
+pulsefreq = 5.0 #Hz
 
 pulseWidth = 0.0002 #s, default is 0.0002 -> 200 uS
 riseEdge=0.00000002 #s, default is 0.00000002 -> 2 ns, minimum of the function gen.

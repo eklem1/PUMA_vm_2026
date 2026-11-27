@@ -58,7 +58,7 @@ def SetupFunctionGen(funGen, pulsefreq = 2, pulseWidth = 0.0002, riseEdge=0.0000
     ## set up channel 2 for triggering on
     funGen.write('C2:BSWV WVTP,PULSE')
     #funGen.write(f'C2:BSWV FRQ,{pulsefreq}') #unit is Hzc
-    funGen.write('C2:BSWV HLEV,1.2') #unit is V
+    funGen.write('C2:BSWV HLEV,1.9') #unit is V
     # Low level : 0 V 
     funGen.write('C2:BSWV LLEV,0')
     # Pulse width: 200 us  
@@ -101,7 +101,7 @@ def SetupFunctionGenTEST(funGen, pulsefreq = 2, pulseWidth = 0.0002, riseEdge=0.
     ## set up channel 2 for triggering on
     funGen.write('C2:BSWV WVTP,PULSE')
     funGen.write(f'C2:BSWV FRQ,{pulsefreq}') #unit is Hzc
-    funGen.write('C2:BSWV HLEV,1.2') #unit is V
+    funGen.write('C2:BSWV HLEV,1.9') #unit is V
     # Low level : 0 V 
     funGen.write('C2:BSWV LLEV,0')
     # Pulse width: 200 us  
